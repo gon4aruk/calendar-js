@@ -76,3 +76,10 @@ $backgroung-event-color: #6495ed;
 .hidden {
   display: none;
 }
+
+.decorate-red-line {
+  width: 100%;
+  height: 2px;
+  background-color: red;
+  position: absolute;
+}
