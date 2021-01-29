@@ -1,1 +1,12 @@
 // стили формы события внутри модального окна
+.create-event__close-btn,
+.event-form__submit-btn {
+  background-color: $buttons-background-color;
+  outline: none;
+  cursor: pointer;
+  border: 1px solid #ccc;
+
+  &:focus {
+    background-color: $buttons-background-color;
+  }
+}
