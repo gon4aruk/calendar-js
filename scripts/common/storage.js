@@ -5,7 +5,7 @@ let storage = {
   eventIdToDelete: null,
 
   // хранит дату понедельника отображаемой недели
-  displayedWeekStart: getStartOfWeek(new Date()),
+  displayedWeekStart: null,
 
   // хранит массив всех событий
   events: [],

@@ -49,7 +49,9 @@ function onCreateEvent(event) {
     end: getDateTime(eventDate, eventEndTime),
   };
 
-  getItem("events").push(newEvent);
+  const eventsList = getItem("events");
+  eventsList.push(newEvent);
+  setItem("events", eventsList);
   closeModal();
   clearEventForm();
   renderEvents();
