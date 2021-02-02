@@ -3,9 +3,9 @@ import { renderEvents } from "./events.js";
 import { getDateTime } from "../common/time.utils.js";
 import { closeModal } from "../common/modal.js";
 
-const eventFormElem = document.querySelector(".event-form");
 const closeEventFormBtn = document.querySelector(".create-event__close-btn");
 const eventFormSubmitBtn = document.querySelector(".event-form__submit-btn");
+const eventFormColorElem = document.querySelector(".event-form__color");
 
 function clearEventForm() {
   // ф-ция должна очистить поля формы от значений
@@ -35,23 +35,27 @@ function onCreateEvent(event) {
   event.preventDefault();
 
   const eventFormFields = document.querySelectorAll(".event-form__field");
-  const eventTitle = eventFormFields[0].value;
-  const eventDate = eventFormFields[1].value;
-  const eventStartTime = eventFormFields[2].value;
-  const eventEndTime = eventFormFields[3].value;
-  const eventDescription = eventFormFields[4].value;
+  const [
+    eventTitle,
+    eventDate,
+    eventStartTime,
+    eventEndTime,
+    eventDescription,
+  ] = eventFormFields;
 
   const newEvent = {
     id: Math.floor(Math.random() * 1000), // id понадобится для работы с событиями
-    title: eventTitle,
-    description: eventDescription,
-    start: getDateTime(eventDate, eventStartTime),
-    end: getDateTime(eventDate, eventEndTime),
+    title: eventTitle.value,
+    description: eventDescription.value,
+    start: getDateTime(eventDate.value, eventStartTime.value),
+    end: getDateTime(eventDate.value, eventEndTime.value),
+    color: eventFormColorElem.value,
   };
 
   const eventsList = getItem("events");
   eventsList.push(newEvent);
   setItem("events", eventsList);
+
   closeModal();
   clearEventForm();
   renderEvents();

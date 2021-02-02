@@ -21,7 +21,6 @@ function handleEventClick(event) {
   const x = event.pageX;
   openPopup(x, y);
   setItem("eventIdToDelete", event.target.dataset.eventId);
-  console.log(event.target.closest(".event"));
 }
 
 function removeEventsFromCalendar() {
@@ -36,7 +35,8 @@ const createEventElement = (
   differenceOfTimes,
   titleOfEvent,
   timeOfStart,
-  timeOfEnd
+  timeOfEnd,
+  color
 ) => {
   // ф-ция создает DOM элемент события
   // событие должно позиционироваться абсолютно внутри нужной ячейки времени внутри дня
@@ -48,7 +48,7 @@ const createEventElement = (
   eventElement.dataset.eventId = id;
   eventElement.setAttribute(
     "style",
-    `top: ${startMinutes}px; height: ${differenceOfTimes}px`
+    `top: ${startMinutes}px; height: ${differenceOfTimes}px; background-color: ${color};`
   );
 
   eventElement.innerHTML = `<div class="event__title">${titleOfEvent}</div>
@@ -66,72 +66,50 @@ export const renderEvents = () => {
   // каждый день и временная ячейка должно содержать дата атрибуты, по которым можно будет найти нужную временную ячейку для события
   // не забудьте удалить с календаря старые события перед добавлением новых
 
+  const MINUTES_OF_MILISECONDS = 1000 * 60;
+
   const eventsList = getItem("events");
-  const eventsListOnThisWeek = eventsList.filter(
-    (elem) =>
-      elem.start.getTime() > getItem("displayedWeekStart").getTime() &&
-      elem.start.getTime() <
-        shmoment(getItem("displayedWeekStart"))
-          .add("days", 7)
-          .result()
-          .getTime()
-  );
+  const eventsListOnThisWeek = eventsList.filter((elem) => {
+    const startTime = new Date(elem.start);
+    const timeNow = new Date(getItem("displayedWeekStart"));
+    return (
+      startTime.getTime() > timeNow.getTime() &&
+      startTime.getTime() < shmoment(timeNow).add("days", 7).result().getTime()
+    );
+  });
 
   eventsListOnThisWeek.forEach((element) => {
     const eventId = element.id;
-    const eventStartMinutes = element.start.getMinutes();
+    const startTime = new Date(element.start);
+    const endTime = new Date(element.end);
+    const eventStartMinutes = startTime.getMinutes();
     const differenceOfTimes = Math.floor(
-      (element.end.getTime() - element.start.getTime()) / 1000 / 60
+      (endTime.getTime() - startTime.getTime()) / MINUTES_OF_MILISECONDS
     );
     const titleOfEvent = element.title;
 
     const startHours =
-      element.start.getHours() < 10
-        ? 0 + String(element.start.getHours())
-        : element.start.getHours();
+      startTime.getHours() < 10
+        ? 0 + String(startTime.getHours())
+        : startTime.getHours();
     const startMinutes =
-      element.start.getMinutes() < 10
-        ? 0 + String(element.start.getMinutes())
-        : element.start.getMinutes();
+      startTime.getMinutes() < 10
+        ? 0 + String(startTime.getMinutes())
+        : startTime.getMinutes();
 
     const timeOfStart = `${startHours}:${startMinutes}`;
 
-    // if (+element.start.getHours() < 10) {
-    //   timeOfStart = `0${element.start.getHours()}:${element.start.getMinutes()}`;
-    // } else if (+element.start.getMinutes() < 10) {
-    //   timeOfStart = `${element.start.getHours()}:0${element.start.getMinutes()}`;
-    // } else if (
-    //   +element.start.getHours() < 10 &&
-    //   +element.start.getMinutes() < 10
-    // ) {
-    //   timeOfStart = `0${element.start.getHours()}:0${element.start.getMinutes()}`;
-    // } else {
-    //   timeOfStart = `${element.start.getHours()}:${element.start.getMinutes()}`;
-    // }
-
     const endHours =
-      element.end.getHours() < 10
-        ? 0 + String(element.end.getHours())
-        : element.end.getHours();
+      endTime.getHours() < 10
+        ? 0 + String(endTime.getHours())
+        : endTime.getHours();
     const endMinutes =
-      element.end.getMinutes() < 10
-        ? 0 + String(element.end.getMinutes())
-        : element.end.getMinutes();
+      endTime.getMinutes() < 10
+        ? 0 + String(endTime.getMinutes())
+        : endTime.getMinutes();
 
     const timeOfEnd = `${endHours}:${endMinutes}`;
-
-    // if (+element.start.getHours() < 10) {
-    //   timeOfEnd = `0${element.end.getHours()}:${element.end.getMinutes()}`;
-    // } else if (+element.start.getMinutes() < 10) {
-    //   timeOfEnd = `${element.end.getHours()}:0${element.end.getMinutes()}`;
-    // } else if (
-    //   +element.start.getHours() < 10 &&
-    //   +element.start.getMinutes() < 10
-    // ) {
-    //   timeOfEnd = `0${element.end.getHours()}:0${element.end.getMinutes()}`;
-    // } else {
-    //   timeOfEnd = `${element.end.getHours()}:${element.end.getMinutes()}`;
-    // }
+    const color = element.color;
 
     const eventElement = createEventElement(
       eventId,
@@ -139,15 +117,14 @@ export const renderEvents = () => {
       differenceOfTimes,
       titleOfEvent,
       timeOfStart,
-      timeOfEnd
+      timeOfEnd,
+      color
     );
 
     const timeSlot = document
+      .querySelector(`.calendar__day[data-time = '${startTime.getDate()}']`)
       .querySelector(
-        `.calendar__day[data-time = '${element.start.getDate()}']`
-      )
-      .querySelector(
-        `.calendar__time-slot[data-time = '${element.start.getHours()}']`
+        `.calendar__time-slot[data-time = '${startTime.getHours()}']`
       );
 
     timeSlot.append(eventElement);

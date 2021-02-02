@@ -210,6 +210,11 @@
   background-color: #f1f1f1;
 }
 
+.create-event__header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .event {
   background-color: #6495ed;
   z-index: 8;

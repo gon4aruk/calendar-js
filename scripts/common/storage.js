@@ -1,24 +1,32 @@
 import { getStartOfWeek } from "./time.utils.js";
 
-let storage = {
-  // используется для удаления события
-  eventIdToDelete: null,
+if (!localStorage.getItem("storage")) {
+  localStorage.setItem(
+    "storage",
+    JSON.stringify({
+      // используется для удаления события
+      eventIdToDelete: null,
 
-  // хранит дату понедельника отображаемой недели
-  displayedWeekStart: null,
+      // хранит дату понедельника отображаемой недели
+      displayedWeekStart: null,
 
-  // хранит массив всех событий
-  events: [],
-  // это все данные, которые вам нужно хранить для работы приложения
-};
+      // хранит массив всех событий
+      events: [],
+      // это все данные, которые вам нужно хранить для работы приложения
+    })
+  );
+}
 
 export const setItem = (key, value) => {
   // ф-ция должна устанавливать значения в объект storage
+  const storage = JSON.parse(localStorage.getItem("storage"));
   storage[key] = value;
+  localStorage.setItem("storage", JSON.stringify(storage));
 };
 
 export const getItem = (key) => {
   // ф-ция должна возвращать по ключу значения из объекта storage
+  const storage = JSON.parse(localStorage.getItem("storage"));
   return storage[key];
 };
 

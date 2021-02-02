@@ -2,6 +2,7 @@ import { getItem, setItem } from "../common/storage.js";
 import { renderWeek } from "../calendar/calendar.js";
 import { renderHeader } from "../calendar/header.js";
 import { getStartOfWeek, getDisplayedMonth } from "../common/time.utils.js";
+import { renderRedLine } from "../common/redline.js";
 import shmoment from "../common/shmoment.js";
 
 const navElem = document.querySelector(".navigation");
@@ -20,6 +21,9 @@ function renderCurrentMonth() {
 const onChangeWeek = (event) => {
   // при переключении недели обновите displayedWeekStart в storage
   // и перерисуйте все необходимые элементы страницы (renderHeader, renderWeek, renderCurrentMonth)
+  if(!event.target.closest("button")) {
+    return;
+  };
 
   if (event.target.closest("button").dataset.direction === "next") {
     setItem(
@@ -47,6 +51,13 @@ const onChangeWeek = (event) => {
   renderWeek();
 
   renderCurrentMonth();
+
+  const startOfCurrentWeek = new Date(getItem("displayedWeekStart")).getTime();
+  const startOfWeekNow = getStartOfWeek(new Date()).getTime();
+
+  if (startOfCurrentWeek === startOfWeekNow) {
+    renderRedLine();
+  }
 };
 
 export const initNavigation = () => {
