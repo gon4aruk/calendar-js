@@ -137,7 +137,6 @@ function onDeleteEvent() {
   // закрыть попап
   // перерисовать события на странице в соответствии с новым списком событий в storage (renderEvents)
 
-  console.log('test');
   const eventsList = getItem("events");
   const eventIdToDelete = getItem("eventIdToDelete");
 
@@ -146,7 +145,7 @@ function onDeleteEvent() {
 
   document.querySelector(
     `.event[data-event-id = '${eventIdToDelete}']`
-  ).parentElement.innerHTML = "";
+  ).closest('.calendar__time-slot').innerHTML = "";
 
   closePopup();
   renderEvents();
