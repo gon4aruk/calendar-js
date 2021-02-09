@@ -20,7 +20,15 @@ function handleEventClick(event) {
   const y = event.pageY;
   const x = event.pageX;
   openPopup(x, y);
-  setItem("eventIdToDelete", event.target.dataset.eventId);
+
+  if (
+    event.target.classList.contains("event__title") ||
+    event.target.classList.contains("event__time")
+  ) {
+    setItem("eventIdToDelete", event.target.closest(".event").dataset.eventId);
+  } else {
+    setItem("eventIdToDelete", event.target.dataset.eventId);
+  }
 }
 
 function removeEventsFromCalendar() {
@@ -142,9 +150,9 @@ function onDeleteEvent() {
   const newEventsList = eventsList.filter(({ id }) => +id !== +eventIdToDelete);
   setItem("events", newEventsList);
 
-  document.querySelector(
-    `.event[data-event-id = '${eventIdToDelete}']`
-  ).closest('.calendar__time-slot').innerHTML = "";
+  document
+    .querySelector(`.event[data-event-id = '${eventIdToDelete}']`)
+    .closest(".calendar__time-slot").innerHTML = "";
 
   closePopup();
   renderEvents();
