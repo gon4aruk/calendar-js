@@ -67,7 +67,6 @@ export const renderEvents = () => {
   // не забудьте удалить с календаря старые события перед добавлением новых
 
   const MINUTES_OF_MILISECONDS = 1000 * 60;
-
   const eventsList = getItem("events");
   const eventsListOnThisWeek = eventsList.filter((elem) => {
     const startTime = new Date(elem.start);
