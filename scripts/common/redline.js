@@ -1,18 +1,44 @@
-export const renderRedLine = () => {
-  const timeSlot = document
-    .querySelector(`.calendar__day[data-time = '${new Date().getDate()}']`)
-    .querySelector(
-      `.calendar__time-slot[data-time = '${new Date().getHours()}']`
-    );
+const createRedLine = (minutesNow) => {
+  const redLine = document.createElement("div");
+  redLine.classList.add("decorate-red-line");
+  redLine.style.top = `${minutesNow}px`;
+  return redLine;
+};
 
-  let minutes = new Date().getMinutes();
-  timeSlot.innerHTML = `<div class="decorate-red-line" style="top: ${minutes}px"></div>`;
+export const renderRedLine = () => {
+  let dateNow = new Date().getDate();
+  let hoursNow = new Date().getHours();
+  let minutesNow = new Date().getMinutes();
+  let timeSlot = document
+    .querySelector(`.calendar__day[data-time = '${dateNow}']`)
+    .querySelector(`.calendar__time-slot[data-time = '${hoursNow}']`);
+
+  let redLineElem = createRedLine(minutesNow);
+  timeSlot.append(redLineElem);
 
   const updateLinePosition = () => {
-    if (minutes !== new Date().getMinutes()) {
-      minutes = new Date().getMinutes();
+    if (dateNow !== new Date().getDate()) {
+      dateNow = new Date().getDate();
+      timeSlot = document
+        .querySelector(`.calendar__day[data-time = '${dateNow}']`)
+        .querySelector(`.calendar__time-slot[data-time = '${hoursNow}']`);
+      redLineElem.remove();
+      timeSlot.append(redLineElem);
+    }
 
-      timeSlot.innerHTML = `<div class="decorate-red-line" style="top: ${minutes}px"></div>`;
+    if (hoursNow !== new Date().getHours()) {
+      hoursNow = new Date().getHours();
+      timeSlot = document
+        .querySelector(`.calendar__day[data-time = '${new Date().getDate()}']`)
+        .querySelector(`.calendar__time-slot[data-time = '${hoursNow}']`);
+      redLineElem.remove();
+      timeSlot.append(redLineElem);
+    }
+    if (minutesNow !== new Date().getMinutes()) {
+      minutesNow = new Date().getMinutes();
+      redLineElem.remove();
+      redLineElem = createRedLine(minutesNow);
+      timeSlot.append(redLineElem);
     }
   };
   setInterval(updateLinePosition, 1000);
