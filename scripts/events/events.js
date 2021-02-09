@@ -137,6 +137,7 @@ function onDeleteEvent() {
   // закрыть попап
   // перерисовать события на странице в соответствии с новым списком событий в storage (renderEvents)
 
+  console.log('test');
   const eventsList = getItem("events");
   const eventIdToDelete = getItem("eventIdToDelete");
 
