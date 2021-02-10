@@ -1,40 +1,34 @@
-import { getStartOfWeek } from "./time.utils.js";
+const onDocumnetLoaded = () => {
+  if (!localStorage.getItem("storage")) {
+    localStorage.setItem(
+      "storage",
+      JSON.stringify({
+        eventIdToDelete: null,
+        displayedWeekStart: null,
+        events: [],
+      })
+    );
+  }
+};
 
-if (!localStorage.getItem("storage")) {
-  localStorage.setItem(
-    "storage",
-    JSON.stringify({
-      // используется для удаления события
-      eventIdToDelete: null,
-
-      // хранит дату понедельника отображаемой недели
-      displayedWeekStart: null,
-
-      // хранит массив всех событий
-      events: [],
-      // это все данные, которые вам нужно хранить для работы приложения
-    })
-  );
-}
+window.addEventListener("DOMContentLoaded", onDocumnetLoaded);
 
 export const setItem = (key, value) => {
-  // ф-ция должна устанавливать значения в объект storage
   const storage = JSON.parse(localStorage.getItem("storage"));
   storage[key] = value;
   localStorage.setItem("storage", JSON.stringify(storage));
 };
 
 export const getItem = (key) => {
-  // ф-ция должна возвращать по ключу значения из объекта storage
   const storage = JSON.parse(localStorage.getItem("storage"));
   return storage[key];
 };
 
 // пример объекта события
-const eventExample = {
-  id: 0.7520027086457333, // id понадобится для работы с событиями
-  title: "Title",
-  description: "Some description",
-  start: new Date("2020-03-17T01:10:00.000Z"),
-  end: new Date("2020-03-17T04:30:00.000Z"),
-};
+// const eventExample = {
+//   id: 0.7520027086457333, // id понадобится для работы с событиями
+//   title: "Title",
+//   description: "Some description",
+//   start: new Date("2020-03-17T01:10:00.000Z"),
+//   end: new Date("2020-03-17T04:30:00.000Z"),
+// };
