@@ -1,45 +1,31 @@
-const createRedLine = (minutesNow) => {
-  const redLine = document.createElement("div");
-  redLine.classList.add("decorate-red-line");
-  redLine.style.top = `${minutesNow}px`;
-  return redLine;
-};
-
-export const renderRedLine = () => {
-  let dateNow = new Date().getDate();
-  let hoursNow = new Date().getHours();
-  let minutesNow = new Date().getMinutes();
-  let timeSlot = document
+const addRedLine = (minutesNow) => {
+  const dateNow = new Date().getDate();
+  const hoursNow = new Date().getHours();
+  const timeSlot = document
     .querySelector(`.calendar__day[data-time = '${dateNow}']`)
     .querySelector(`.calendar__time-slot[data-time = '${hoursNow}']`);
 
-  let redLineElem = createRedLine(minutesNow);
-  timeSlot.append(redLineElem);
+  const redLine = document.createElement("div");
+  redLine.classList.add("decorate-red-line");
+  redLine.style.top = `${minutesNow}px`;
+  timeSlot.append(redLine);
+};
+
+export const renderRedLine = () => {
+  let minutesNow = new Date().getMinutes();
+
+  addRedLine(minutesNow);
 
   const updateLinePosition = () => {
-    if (dateNow !== new Date().getDate()) {
-      dateNow = new Date().getDate();
-      timeSlot = document
-        .querySelector(`.calendar__day[data-time = '${dateNow}']`)
-        .querySelector(`.calendar__time-slot[data-time = '${hoursNow}']`);
-      redLineElem.remove();
-      timeSlot.append(redLineElem);
-    }
-
-    if (hoursNow !== new Date().getHours()) {
-      hoursNow = new Date().getHours();
-      timeSlot = document
-        .querySelector(`.calendar__day[data-time = '${new Date().getDate()}']`)
-        .querySelector(`.calendar__time-slot[data-time = '${hoursNow}']`);
-      redLineElem.remove();
-      timeSlot.append(redLineElem);
-    }
     if (minutesNow !== new Date().getMinutes()) {
+      const redLineElem = document.querySelector(".decorate-red-line");
+
       minutesNow = new Date().getMinutes();
+
       redLineElem.remove();
-      redLineElem = createRedLine(minutesNow);
-      timeSlot.append(redLineElem);
+      addRedLine(minutesNow);
     }
   };
+
   setInterval(updateLinePosition, 1000);
 };
