@@ -1,7 +1,7 @@
 import { getItem } from "../common/storage.js";
 import { generateWeekRange } from "../common/time.utils.js";
 import { renderEvents } from "../events/events.js";
-import { createNumbersArray } from "../common/createNumbersArray.js";
+import { createNumbersArray } from "../common/time.utils.js";
 
 const generateDay = () => {
   // функция должна сгенерировать и вернуть разметку дня в виде строки

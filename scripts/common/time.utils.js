@@ -1,5 +1,15 @@
 import shmoment from "./shmoment.js";
 
+export const createNumbersArray = (from, to) => {
+  const result = [];
+
+  for (let i = from; i <= to; i += 1) {
+    result.push(i);
+  }
+
+  return result;
+};
+
 // вернет дату понедельника той недели, в которую входит переданный день
 export const getStartOfWeek = (date) => {
   const dateCopy = new Date(date);

@@ -1,4 +1,4 @@
-import { createNumbersArray } from "../common/createNumbersArray.js";
+import { createNumbersArray } from "../common/time.utils.js";
 
 export const renderTimescale = () => {
   // ф-ция должна генерировать разметку для боковой шкалы времени (24 часа)
