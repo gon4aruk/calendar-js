@@ -3,23 +3,14 @@ import { renderEvents } from "./events.js";
 import { getDateTime } from "../common/time.utils.js";
 import { closeModal } from "../common/modal.js";
 
+const eventFormElem = document.querySelector(".event-form");
 const closeEventFormBtn = document.querySelector(".create-event__close-btn");
 const eventFormSubmitBtn = document.querySelector(".event-form__submit-btn");
 const eventFormColorElem = document.querySelector(".event-form__color");
 
-function clearEventForm() {
-  // ф-ция должна очистить поля формы от значений
-
-  document.querySelectorAll(".event-form__field").forEach((elem) => {
-    elem.value = "";
-  });
-}
-
 function onCloseEventForm() {
-  // здесь нужно закрыть модальное окно и очистить форму
-
   closeModal();
-  clearEventForm();
+  eventFormElem.reset();
 }
 
 function onCreateEvent(event) {
@@ -34,21 +25,14 @@ function onCreateEvent(event) {
   // и запускаем перерисовку событий с помощью renderEvents
   event.preventDefault();
 
-  const eventFormFields = document.querySelectorAll(".event-form__field");
-  const [
-    eventTitle,
-    eventDate,
-    eventStartTime,
-    eventEndTime,
-    eventDescription,
-  ] = eventFormFields;
+  const formData = new FormData(eventFormElem);
 
   const newEvent = {
     id: Math.floor(Math.random() * 1000), // id понадобится для работы с событиями
-    title: eventTitle.value,
-    description: eventDescription.value,
-    start: getDateTime(eventDate.value, eventStartTime.value),
-    end: getDateTime(eventDate.value, eventEndTime.value),
+    title: formData.get("title"),
+    description: formData.get("description"),
+    start: getDateTime(formData.get("date"), formData.get("startTime")),
+    end: getDateTime(formData.get("date"), formData.get("endTime")),
     color: eventFormColorElem.value,
   };
 
@@ -57,7 +41,7 @@ function onCreateEvent(event) {
   setItem("events", eventsList);
 
   closeModal();
-  clearEventForm();
+  eventFormElem.reset();
   renderEvents();
 }
 

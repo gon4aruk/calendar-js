@@ -1,6 +1,7 @@
 import { getItem, setItem } from "../common/storage.js";
 import shmoment from "../common/shmoment.js";
-import { openPopup, closePopup } from "../common/popup.js";
+import { openPopup } from "../common/popup.js";
+import { renderRedLine } from "../common/redline.js";
 
 const weekElem = document.querySelector(".calendar__week");
 const deleteEventBtn = document.querySelector(".delete-event-btn");
@@ -31,32 +32,58 @@ function handleEventClick(event) {
   }
 }
 
-function removeEventsFromCalendar() {
-  // ф-ция для удаления всех событий с календаря
+// const createEventElement = (
+//   id,
+//   startMinutes,
+//   differenceOfTimes,
+//   titleOfEvent,
+//   timeOfStart,
+//   timeOfEnd,
+//   color
+// ) => {
+//   // ф-ция создает DOM элемент события
+//   // событие должно позиционироваться абсолютно внутри нужной ячейки времени внутри дня
+//   // нужно добавить id события в дата атрибут
+//   // здесь для создания DOM элемента события используйте document.createElement
 
-  setItem("events", []);
-}
+//   const eventElement = document.createElement("div");
+//   eventElement.classList.add("event");
+//   eventElement.dataset.eventId = id;
+//   eventElement.setAttribute(
+//     "style",
+//     `top: ${startMinutes}px; height: ${differenceOfTimes}px; background-color: ${color};`
+//   );
 
-const createEventElement = (
-  id,
-  startMinutes,
-  differenceOfTimes,
-  titleOfEvent,
-  timeOfStart,
-  timeOfEnd,
-  color
-) => {
+//   eventElement.innerHTML = `<div class="event__title">${titleOfEvent}</div>
+//   <div class="event__time">${timeOfStart} - ${timeOfEnd}</div>`;
+
+//   return eventElement;
+// };
+
+const createEventElement = (eventItem) => {
   // ф-ция создает DOM элемент события
   // событие должно позиционироваться абсолютно внутри нужной ячейки времени внутри дня
   // нужно добавить id события в дата атрибут
   // здесь для создания DOM элемента события используйте document.createElement
+  const MINUTES_OF_MILISECONDS = 1000 * 60;
+  const eventId = eventItem.id;
+  const startMinutes = new Date(eventItem.start).getMinutes();
+  const startTime = new Date(eventItem.start);
+  const endTime = new Date(eventItem.end);
+  const differenceOfTimes = Math.floor(
+    (endTime.getTime() - startTime.getTime()) / MINUTES_OF_MILISECONDS
+  );
+  const eventColor = eventItem.color;
+  const titleOfEvent = eventItem.title;
+  const timeOfStart = eventItem.start.slice(11, 16);
+  const timeOfEnd = eventItem.end.slice(11, 16);
 
   const eventElement = document.createElement("div");
   eventElement.classList.add("event");
-  eventElement.dataset.eventId = id;
+  eventElement.dataset.eventId = eventId;
   eventElement.setAttribute(
     "style",
-    `top: ${startMinutes}px; height: ${differenceOfTimes}px; background-color: ${color};`
+    `top: ${startMinutes}px; height: ${differenceOfTimes}px; background-color: ${eventColor};`
   );
 
   eventElement.innerHTML = `<div class="event__title">${titleOfEvent}</div>
@@ -74,7 +101,6 @@ export const renderEvents = () => {
   // каждый день и временная ячейка должно содержать дата атрибуты, по которым можно будет найти нужную временную ячейку для события
   // не забудьте удалить с календаря старые события перед добавлением новых
 
-  const MINUTES_OF_MILISECONDS = 1000 * 60;
   const eventsList = getItem("events");
   const eventsListOnThisWeek = eventsList.filter((elem) => {
     const startTime = new Date(elem.start);
@@ -86,52 +112,13 @@ export const renderEvents = () => {
   });
 
   eventsListOnThisWeek.forEach((element) => {
-    const eventId = element.id;
     const startTime = new Date(element.start);
-    const endTime = new Date(element.end);
-    const eventStartMinutes = startTime.getMinutes();
-    const differenceOfTimes = Math.floor(
-      (endTime.getTime() - startTime.getTime()) / MINUTES_OF_MILISECONDS
-    );
-    const titleOfEvent = element.title;
-
-    const startHours =
-      startTime.getHours() < 10
-        ? 0 + String(startTime.getHours())
-        : startTime.getHours();
-    const startMinutes =
-      startTime.getMinutes() < 10
-        ? 0 + String(startTime.getMinutes())
-        : startTime.getMinutes();
-
-    const timeOfStart = `${startHours}:${startMinutes}`;
-
-    const endHours =
-      endTime.getHours() < 10
-        ? 0 + String(endTime.getHours())
-        : endTime.getHours();
-    const endMinutes =
-      endTime.getMinutes() < 10
-        ? 0 + String(endTime.getMinutes())
-        : endTime.getMinutes();
-
-    const timeOfEnd = `${endHours}:${endMinutes}`;
-    const color = element.color;
-
-    const eventElement = createEventElement(
-      eventId,
-      eventStartMinutes,
-      differenceOfTimes,
-      titleOfEvent,
-      timeOfStart,
-      timeOfEnd,
-      color
-    );
+    const eventElement = createEventElement(element);
 
     const timeSlot = document
-      .querySelector(`.calendar__day[data-time = '${startTime.getDate()}']`)
+      .querySelector(`.calendar__day[data-time = '${startTime.getUTCDate()}']`)
       .querySelector(
-        `.calendar__time-slot[data-time = '${startTime.getHours()}']`
+        `.calendar__time-slot[data-time = '${startTime.getUTCHours()}']`
       );
 
     timeSlot.append(eventElement);
@@ -146,6 +133,7 @@ function onDeleteEvent() {
 
   const eventsList = getItem("events");
   const eventIdToDelete = getItem("eventIdToDelete");
+  const popupElem = document.querySelector(".popup");
 
   const newEventsList = eventsList.filter(({ id }) => +id !== +eventIdToDelete);
   setItem("events", newEventsList);
@@ -154,7 +142,8 @@ function onDeleteEvent() {
     .querySelector(`.event[data-event-id = '${eventIdToDelete}']`)
     .closest(".calendar__time-slot").innerHTML = "";
 
-  closePopup();
+  renderRedLine();
+  popupElem.classList.add("hidden");
   renderEvents();
 }
 

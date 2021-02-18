@@ -1,5 +1,4 @@
 const modalElem = document.querySelector(".modal");
-const modalContentElem = document.querySelector(".modal__content");
 
 // опишите ф-ции openModal и closeModal
 // модальное окно работает похожим на попап образом
