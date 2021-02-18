@@ -32,51 +32,24 @@ function handleEventClick(event) {
   }
 }
 
-// const createEventElement = (
-//   id,
-//   startMinutes,
-//   differenceOfTimes,
-//   titleOfEvent,
-//   timeOfStart,
-//   timeOfEnd,
-//   color
-// ) => {
-//   // ф-ция создает DOM элемент события
-//   // событие должно позиционироваться абсолютно внутри нужной ячейки времени внутри дня
-//   // нужно добавить id события в дата атрибут
-//   // здесь для создания DOM элемента события используйте document.createElement
-
-//   const eventElement = document.createElement("div");
-//   eventElement.classList.add("event");
-//   eventElement.dataset.eventId = id;
-//   eventElement.setAttribute(
-//     "style",
-//     `top: ${startMinutes}px; height: ${differenceOfTimes}px; background-color: ${color};`
-//   );
-
-//   eventElement.innerHTML = `<div class="event__title">${titleOfEvent}</div>
-//   <div class="event__time">${timeOfStart} - ${timeOfEnd}</div>`;
-
-//   return eventElement;
-// };
-
 const createEventElement = (eventItem) => {
   // ф-ция создает DOM элемент события
   // событие должно позиционироваться абсолютно внутри нужной ячейки времени внутри дня
   // нужно добавить id события в дата атрибут
   // здесь для создания DOM элемента события используйте document.createElement
+
   const MINUTES_OF_MILISECONDS = 1000 * 60;
   const eventId = eventItem.id;
   const startMinutes = new Date(eventItem.start).getMinutes();
-  const startTime = new Date(eventItem.start);
-  const endTime = new Date(eventItem.end);
+  const startTime = new Date(Date.parse(eventItem.start));
+  const endTime = new Date(Date.parse(eventItem.end));
   const differenceOfTimes = Math.floor(
     (endTime.getTime() - startTime.getTime()) / MINUTES_OF_MILISECONDS
   );
   const eventColor = eventItem.color;
   const titleOfEvent = eventItem.title;
-  const timeOfStart = eventItem.start.slice(11, 16);
-  const timeOfEnd = eventItem.end.slice(11, 16);
+  const timeOfStart = new Date(eventItem.start).toString().slice(16, 21);
+  const timeOfEnd = new Date(eventItem.end).toString().slice(16, 21);
 
   const eventElement = document.createElement("div");
   eventElement.classList.add("event");
@@ -116,9 +89,9 @@ export const renderEvents = () => {
     const eventElement = createEventElement(element);
 
     const timeSlot = document
-      .querySelector(`.calendar__day[data-time = '${startTime.getUTCDate()}']`)
+      .querySelector(`.calendar__day[data-time = '${startTime.getDate()}']`)
       .querySelector(
-        `.calendar__time-slot[data-time = '${startTime.getUTCHours()}']`
+        `.calendar__time-slot[data-time = '${startTime.getHours()}']`
       );
 
     timeSlot.append(eventElement);
