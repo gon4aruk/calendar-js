@@ -1,6 +1,6 @@
-import { getItem } from "../common/storage.js";
 import { generateWeekRange } from "../common/time.utils.js";
 import { openModal } from "../common/modal.js";
+import { getItem } from "../common/storage.js";
 
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
