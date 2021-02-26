@@ -35,11 +35,6 @@ function handleEventClick(event) {
 }
 
 const createEventElement = (eventItem) => {
-  // ф-ция создает DOM элемент события
-  // событие должно позиционироваться абсолютно внутри нужной ячейки времени внутри дня
-  // нужно добавить id события в дата атрибут
-  // здесь для создания DOM элемента события используйте document.createElement
-
   const MINUTES_OF_MILISECONDS = 1000 * 60;
   const eventId = eventItem.id;
   const startMinutes = getDateTime(
@@ -74,47 +69,42 @@ const createEventElement = (eventItem) => {
   return eventElement;
 };
 
-export const renderEvents = () => {
-  // достаем из storage все события и дату понедельника отображаемой недели
-  // фильтруем события, оставляем только те, что входят в текущую неделю
-  // создаем для них DOM элементы с помощью createEventElement
-  // для каждого события находим на странице временную ячейку (.calendar__time-slot)
-  // и вставляем туда событие
-  // каждый день и временная ячейка должно содержать дата атрибуты, по которым можно будет найти нужную временную ячейку для события
-  // не забудьте удалить с календаря старые события перед добавлением новых
-
-  getEventsList().then((eventsList) => {
-    const eventsListOnThisWeek = eventsList.filter((elem) => {
-      const startTime = getDateTime(elem.date, elem.startTime);
-      const dateOfMonday = new Date(getItem("displayedWeekStart"));
-      return (
-        startTime.getTime() > dateOfMonday.getTime() &&
-        startTime.getTime() <
-          shmoment(dateOfMonday).add("days", 7).result().getTime()
-      );
-    });
-
-    eventsListOnThisWeek.forEach((element) => {
-      const startTime = getDateTime(element.date, element.startTime);
-      const eventElement = createEventElement(element);
-
-      const timeSlot = document
-        .querySelector(`.calendar__day[data-time = '${startTime.getDate()}']`)
-        .querySelector(
-          `.calendar__time-slot[data-time = '${startTime.getHours()}']`
-        );
-
-      timeSlot.append(eventElement);
-    });
+const filterEventsList = (eventsList) => {
+  return eventsList.filter((elem) => {
+    const startTime = getDateTime(elem.date, elem.startTime);
+    const dateOfMonday = new Date(getItem("displayedWeekStart"));
+    return (
+      startTime.getTime() > dateOfMonday.getTime() &&
+      startTime.getTime() <
+        shmoment(dateOfMonday).add("days", 7).result().getTime()
+    );
   });
 };
 
+const appendEvents = (eventsListOnThisWeek) => {
+  eventsListOnThisWeek.forEach((element) => {
+    const startTime = getDateTime(element.date, element.startTime);
+    const eventElement = createEventElement(element);
+
+    const timeSlot = document
+      .querySelector(`.calendar__day[data-time = '${startTime.getDate()}']`)
+      .querySelector(
+        `.calendar__time-slot[data-time = '${startTime.getHours()}']`
+      );
+
+    timeSlot.append(eventElement);
+  });
+};
+
+export const renderEvents = () => {
+  getEventsList()
+    .then((eventsList) => {
+      const eventsListOnThisWeek = filterEventsList(eventsList);
+      appendEvents(eventsListOnThisWeek);
+    });
+};
+
 function onDeleteEvent() {
-  // достаем из storage массив событий и eventIdToDelete
-  // удаляем из массива нужное событие и записываем в storage новый массив
-  // закрыть попап
-  // перерисовать события на странице в соответствии с новым списком событий в storage (renderEvents)
-  
   const popupElem = document.querySelector(".popup");
   const eventIdToDelete = getItem("eventIdToDelete");
 

@@ -13,13 +13,11 @@ export const createEvent = (eventData) => {
       "Content-Type": "application/json;charset=utf-8",
     },
     body: JSON.stringify(eventData),
-  })
-  .then(response => response.json())
-  .catch(() => alert("Internal server error"));
+  }).catch(() => alert("Internal server error"));
 };
 
 export const deleteEvent = (eventId) => {
   return fetch(`${baseUrl}/${eventId}`, {
     method: "DELETE",
-  });
+  }).catch(() => alert("Internal server error"));
 };
