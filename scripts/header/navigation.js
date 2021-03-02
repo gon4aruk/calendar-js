@@ -1,66 +1,61 @@
-import { getItem, setItem } from '../common/storage.js'
-import { renderWeek } from '../calendar/calendar.js'
-import { renderHeader } from '../calendar/header.js'
-import { getStartOfWeek, getDisplayedMonth } from '../common/time.utils.js'
-import { renderRedLine } from '../common/redline.js'
-import shmoment from '../common/shmoment.js'
+import { getItem, setItem } from '../common/storage.js';
+import { renderWeek } from '../calendar/calendar.js';
+import { renderHeader } from '../calendar/header.js';
+import { getStartOfWeek, getDisplayedMonth } from '../common/time.utils.js';
+import { renderRedLine } from '../common/redline.js';
+import shmoment from '../common/shmoment.js';
 
-const navElem = document.querySelector('.navigation')
-const displayedMonthElem = document.querySelector(
-    '.navigation__displayed-month'
-)
+const navElem = document.querySelector('.navigation');
+const displayedMonthElem = document.querySelector('.navigation__displayed-month');
 
 function renderCurrentMonth() {
-    // отрисовать месяц, к которому относиться текущая неделя (getDisplayedMonth)
-    // вставить в .navigation__displayed-month
+  // отрисовать месяц, к которому относиться текущая неделя (getDisplayedMonth)
+  // вставить в .navigation__displayed-month
 
-    const currentMonth = getDisplayedMonth(getItem('displayedWeekStart'))
-    displayedMonthElem.innerHTML = currentMonth
+  const currentMonth = getDisplayedMonth(getItem('displayedWeekStart'));
+  displayedMonthElem.innerHTML = currentMonth;
 }
 
-const onChangeWeek = (event) => {
-    // при переключении недели обновите displayedWeekStart в storage
-    // и перерисуйте все необходимые элементы страницы (renderHeader, renderWeek, renderCurrentMonth)
-    if (!event.target.closest('button')) {
-        return
-    }
+const onChangeWeek = event => {
+  // при переключении недели обновите displayedWeekStart в storage
+  // и перерисуйте все необходимые элементы страницы (renderHeader, renderWeek, renderCurrentMonth)
+  if (!event.target.closest('button')) {
+    return;
+  }
 
-    if (event.target.closest('button').dataset.direction === 'next') {
-        setItem(
-            'displayedWeekStart',
-            shmoment(getItem('displayedWeekStart')).add('days', 7).result()
-        )
-    }
+  if (event.target.closest('button').dataset.direction === 'next') {
+    setItem('displayedWeekStart', shmoment(getItem('displayedWeekStart')).add('days', 7).result());
+  }
 
-    if (event.target.closest('button').dataset.direction === 'prev') {
-        setItem(
-            'displayedWeekStart',
-            shmoment(getItem('displayedWeekStart')).subtract('days', 7).result()
-        )
-    }
+  if (event.target.closest('button').dataset.direction === 'prev') {
+    setItem(
+      'displayedWeekStart',
+      shmoment(getItem('displayedWeekStart')).subtract('days', 7).result(),
+    );
+  }
 
-    if (event.target.closest('button').dataset.direction === 'today') {
-        setItem('displayedWeekStart', getStartOfWeek(new Date()))
-    }
+  if (event.target.closest('button').dataset.direction === 'today') {
+    setItem('displayedWeekStart', getStartOfWeek(new Date()));
+  }
 
-    const calendarHeaderElem = document.querySelector('.calendar__header')
-    calendarHeaderElem.innerHTML = ''
-    renderHeader()
+  const calendarHeaderElem = document.querySelector('.calendar__header');
+  calendarHeaderElem.innerHTML = '';
+  renderHeader();
 
-    document.querySelector('.calendar__week').innerHTML = ''
-    renderWeek()
+  document.querySelector('.calendar__week').innerHTML = '';
+  renderWeek();
 
-    renderCurrentMonth()
+  renderCurrentMonth();
 
-    const startOfCurrentWeek = new Date(getItem('displayedWeekStart')).getTime()
-    const startOfWeekNow = getStartOfWeek(new Date()).getTime()
+  const startOfCurrentWeek = new Date(getItem('displayedWeekStart')).getTime();
+  const startOfWeekNow = getStartOfWeek(new Date()).getTime();
 
-    if (startOfCurrentWeek === startOfWeekNow) {
-        renderRedLine()
-    }
-}
+  if (startOfCurrentWeek === startOfWeekNow) {
+    renderRedLine();
+  }
+};
 
 export const initNavigation = () => {
-    renderCurrentMonth()
-    navElem.addEventListener('click', onChangeWeek)
-}
+  renderCurrentMonth();
+  navElem.addEventListener('click', onChangeWeek);
+};
