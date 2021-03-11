@@ -17,9 +17,7 @@ function onCreateEvent(event) {
 
   event.preventDefault();
 
-  const formData = new FormData(eventFormElem);
-
-  const eventData = Object.fromEntries(formData);
+  const eventData = Object.fromEntries(new FormData(eventFormElem));
   eventData.color = eventFormColorElem.value;
 
   createEvent(eventData).then(() => {
